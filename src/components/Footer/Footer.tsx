@@ -5,7 +5,7 @@ export const Footer = () => {
 
   return (
     <footer className={styles.footer}>
-      <a href="https://newline.co">Newline</a>
+      <a href="https://newline.co">Newline</a> | Practice by Sykycao
       <br />
       {currentYear}
     </footer>
