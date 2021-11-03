@@ -1,27 +1,51 @@
-import { useRef, useState } from 'react';
+import {
+  FunctionComponent,
+  ReactElement,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import Soundfont, { InstrumentName, Player } from 'soundfont-player';
 import { MidiValue } from '../../domain/note';
 import { AudioNodesRegistry, DEFAULT_INSTRUMENT } from '../../domain/sound';
 import { Optional } from '../../domain/types';
 
-type Settings = {
+type ProviderProps = {
+  instrument?: InstrumentName;
   AudioContext: AudioContextType;
+  render(props: ProvidedProps): ReactElement;
 };
 
-interface Adapted {
+type ProvidedProps = {
   loading: boolean;
-  current: Optional<InstrumentName>;
-  load(instrument?: InstrumentName): Promise<void>;
   play(note: MidiValue): Promise<void>;
-  stop(note: MidiValue): Promise<void>;
-}
+  stop(noye: MidiValue): Promise<void>;
+};
 
-export function useSoundfont({ AudioContext }: Settings): Adapted {
+export const SoundfontProvider: FunctionComponent<ProviderProps> = ({
+  AudioContext,
+  instrument,
+  render,
+}) => {
   let activeNodes: AudioNodesRegistry = {};
+
   const [current, setCurrent] = useState<Optional<InstrumentName>>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [player, setPlayer] = useState<Optional<Player>>(null);
   const audio = useRef(new AudioContext());
+
+  const loadInstrument = useCallback(() => load(instrument), [instrument]);
+
+  useEffect(() => {
+    if (!loading && instrument !== current) loadInstrument();
+  }, [loadInstrument, loading, instrument, current]);
+
+  async function resume() {
+    return audio.current.state === 'suspended'
+      ? await audio.current.resume()
+      : Promise.resolve();
+  }
 
   async function load(instrument: InstrumentName = DEFAULT_INSTRUMENT) {
     setLoading(true);
@@ -48,16 +72,9 @@ export function useSoundfont({ AudioContext }: Settings): Adapted {
     activeNodes = { ...activeNodes, [note]: null };
   }
 
-  async function resume() {
-    return audio.current.state === 'suspended'
-      ? await audio.current.resume()
-      : Promise.resolve();
-  }
-  return {
+  return render({
     loading,
-    current,
-    load,
     play,
     stop,
-  };
-}
+  });
+};
