@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import { FunctionComponent } from 'react';
 import { NoteType } from '../../domain/note';
-import { usePressObserver } from '../PressObserver/usePressObserver';
+import { usePressObserver } from '../PressObserver';
 import styles from './Key.module.css';
 
 type PressCallback = () => void;
