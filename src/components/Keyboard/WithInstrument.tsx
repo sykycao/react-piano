@@ -1,9 +1,9 @@
 import { Keyboard } from './Keyboard';
 import { useAudioContext } from '../AudioContextProvider';
 import { useInstrument } from '../../state/Instrument';
-import { withInstrument } from '../../adapters/Soundfont/withInstrument';
+import { withInstrumentForwardedRef } from '../../adapters/Soundfont';
 
-const WrappedKeyboard = withInstrument(Keyboard);
+const WrappedKeyboard = withInstrumentForwardedRef(Keyboard);
 
 export const KeyboardWithInstrument = () => {
   const AudioContext = useAudioContext()!;

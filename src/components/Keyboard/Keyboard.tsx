@@ -1,4 +1,4 @@
-import { FunctionComponent } from 'react';
+import { Component } from 'react';
 import { selectKey } from '../../domain/keyboard';
 import { MidiValue, notes } from '../../domain/note';
 import { Key } from '../Key';
@@ -10,26 +10,25 @@ export type KeyboardProps = {
   stop: (note: MidiValue) => Promise<void>;
 };
 
-export const Keyboard: FunctionComponent<KeyboardProps> = ({
-  loading,
-  stop,
-  play,
-}) => {
-  return (
-    <div className={styles.keyboard}>
-      {notes.map(({ midi, type, index, octave }) => {
-        const label = selectKey(octave, index);
-        return (
-          <Key
-            key={midi}
-            type={type}
-            label={label}
-            disabled={loading}
-            onDown={() => play(midi)}
-            onUp={() => stop(midi)}
-          />
-        );
-      })}
-    </div>
-  );
-};
+export class Keyboard extends Component<KeyboardProps> {
+  public render() {
+    const { loading, play, stop } = this.props;
+    return (
+      <div className={styles.keyboard}>
+        {notes.map(({ midi, type, index, octave }) => {
+          const label = selectKey(octave, index);
+          return (
+            <Key
+              key={midi}
+              type={type}
+              label={label}
+              disabled={loading}
+              onDown={() => play(midi)}
+              onUp={() => stop(midi)}
+            />
+          );
+        })}
+      </div>
+    );
+  }
+}
