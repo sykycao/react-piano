@@ -1,2 +1,2 @@
 export * from './Keyboard';
-export * from './WithStaticInstrument';
+export * from './WithInstrument';
